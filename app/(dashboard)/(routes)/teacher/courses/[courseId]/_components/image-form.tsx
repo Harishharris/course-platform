@@ -11,6 +11,8 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/file-upload";
+import { UploadDropzone } from "@uploadthing/react";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
 
 interface ImageFormProps {
   initialData: Course;
@@ -34,10 +36,11 @@ export default function ImageForm({ initialData, courseId }: ImageFormProps) {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Course updated");
-      toggleEdit();
       router.refresh();
     } catch {
       toast.error("Something went wrong");
+    } finally {
+      toggleEdit();
     }
   };
 
@@ -78,6 +81,15 @@ export default function ImageForm({ initialData, courseId }: ImageFormProps) {
         ))}
       {isEditing && (
         <div>
+          {/* <UploadDropzone<OurFileRouter>
+            endpoint={"courseImage"}
+            onClientUploadComplete={(res) => {
+              if (res?.[0].url) {
+                onSubmit({ imageUrl: res?.[0].url });
+              }
+            }}
+            onUploadError={() => alert("PLEASE WORK")}
+          /> */}
           <FileUpload
             endpoint="courseImage"
             onChange={(url) => {

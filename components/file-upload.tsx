@@ -2,8 +2,8 @@
 
 import toast from "react-hot-toast";
 
-import { UploadDropzone } from "@/lib/uploadthing";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { OurFileRouter, ourFileRouter } from "@/app/api/uploadthing/core";
+import { UploadDropzone } from "@uploadthing/react";
 
 interface FileUploadProps {
   onChange: (url?: string) => void;
@@ -11,17 +11,15 @@ interface FileUploadProps {
 }
 
 export const FileUpload = ({ onChange, endpoint }: FileUploadProps) => {
-  console.log(onChange);
   return (
-    <UploadDropzone
-      endpoint={endpoint}
-      onClientUploadComplete={(res) => {
-        onChange(res?.[0].url);
-      }}
-      onUploadError={(error: Error) => {
-        console.log("ERROR", error);
-        toast.error(`${error?.message}`);
-      }}
-    />
+    <>
+      <UploadDropzone<OurFileRouter>
+        endpoint={endpoint}
+        onClientUploadComplete={(res) => {
+          onChange(res?.[0].fileUrl);
+        }}
+        onUploadError={() => alert("OOPS")}
+      />
+    </>
   );
 };

@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs";
-import { NextResponse } from "next/server";
+import { auth } from '@clerk/nextjs';
+import { NextResponse } from 'next/server';
 
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
 
 export async function POST(
   req: Request,
@@ -11,7 +11,7 @@ export async function POST(
     const { userId } = auth();
     const { url } = await req.json();
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse('Unauthorized', { status: 401 });
     }
     const courseOwner = db.course.findUnique({
       where: {
@@ -20,18 +20,18 @@ export async function POST(
       },
     });
     if (!courseOwner) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse('Unauthorized', { status: 401 });
     }
-    const attachments = db.attachment.create({
+    const attachments = await db.attachment.create({
       data: {
         url,
-        name: url.split("/").pop(),
+        name: url.split('/').pop(),
         courseId,
       },
     });
     return NextResponse.json(attachments);
   } catch (err) {
-    console.log("[COURSE_ID_ATTACHMENTS]", err);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.log('[COURSE_ID_ATTACHMENTS]', err);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

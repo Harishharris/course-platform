@@ -2,33 +2,39 @@ import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs';
 import { NextResponse } from 'next/server';
 
-export async function DELETE(
+export async function PUT(
   req: Request,
-  { params }: { params: { courseId: string; attachmentId: string } }
+  { params }: { params: { courseId: string } }
 ) {
   try {
     const { userId } = auth();
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-    const courseOwner = await db.course.findUnique({
+    const { list } = await req.json();
+    const ownCourse = await db.course.findUnique({
       where: {
         id: params.courseId,
         userId,
       },
     });
-    if (!courseOwner) {
+    if (!ownCourse) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
-    const attachment = await db.attachment.delete({
-      where: {
-        courseId: params.courseId,
-        id: params.attachmentId,
-      },
-    });
-    return NextResponse.json(attachment);
+
+    for (let item of list) {
+      await db.chapter.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          position: item.position,
+        },
+      });
+    }
+    return new NextResponse('Success', { status: 200 });
   } catch (err) {
-    console.log('[ATtACHMENT_ID]', err);
+    console.log('[REORDER_ERROR]');
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

@@ -1,19 +1,20 @@
-import { IconBadge } from "@/components/icons-badge";
-import { db } from "@/lib/db";
-import { auth } from "@clerk/nextjs";
+import { IconBadge } from '@/components/icons-badge';
+import { db } from '@/lib/db';
+import { auth } from '@clerk/nextjs';
 import {
   CircleDollarSign,
   File,
   LayoutDashboard,
   ListChecks,
-} from "lucide-react";
-import { redirect } from "next/navigation";
-import TitleForm from "./_components/title-form";
-import DescriptionForm from "./_components/description-form";
-import ImageForm from "./_components/image-form";
-import CategoryForm from "./_components/category-form";
-import PriceForm from "./_components/price-form";
-import AttachmentsForm from "./_components/attachments-form";
+} from 'lucide-react';
+import { redirect } from 'next/navigation';
+import TitleForm from './_components/title-form';
+import DescriptionForm from './_components/description-form';
+import ImageForm from './_components/image-form';
+import CategoryForm from './_components/category-form';
+import PriceForm from './_components/price-form';
+import AttachmentsForm from './_components/attachments-form';
+import ChaptersForm from './_components/chapters-form';
 
 export default async function CourseIdPage({
   params: { courseId },
@@ -22,17 +23,23 @@ export default async function CourseIdPage({
 }) {
   const { userId } = auth();
   if (!userId) {
-    return redirect("/");
+    return redirect('/');
   }
 
   const course = await db.course.findUnique({
     where: {
       id: courseId,
+      userId,
     },
     include: {
+      chapters: {
+        orderBy: {
+          position: 'asc',
+        },
+      },
       attachments: {
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       },
     },
@@ -40,12 +47,12 @@ export default async function CourseIdPage({
 
   const categories = await db.category.findMany({
     orderBy: {
-      name: "asc",
+      name: 'asc',
     },
   });
 
   if (!course) {
-    return redirect("/");
+    return redirect('/');
   }
 
   const requiredFields = [
@@ -54,6 +61,7 @@ export default async function CourseIdPage({
     course.imageUrl,
     course.price,
     course.categoryId,
+    course.chapters.some((chapter) => chapter.isPublished),
   ];
 
   const totalFileds = requiredFields.length;
@@ -95,7 +103,7 @@ export default async function CourseIdPage({
               <IconBadge icon={ListChecks} />
               <h2>Course chapters</h2>
             </div>
-            <div>TODO: Chapters</div>
+            <ChaptersForm initialData={course} courseId={course.id} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
