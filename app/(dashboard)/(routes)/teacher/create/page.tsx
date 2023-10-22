@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-const z = require("zod");
-import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+const z = require('zod');
+import axios from 'axios';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 import {
   Form,
@@ -15,14 +15,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
+} from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 
 const formSchema = z.object({
   title: z.string().min(1, {
-    message: "Title in required!",
+    message: 'Title is required!!',
+  }),
+  description: z.string().min(1, {
+    message: 'Description is required!!',
   }),
 });
 
@@ -30,7 +33,8 @@ export default function CreatePage() {
   const form = useForm<Zod.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      title: '',
+      description: '',
     },
   });
   const router = useRouter();
@@ -38,13 +42,12 @@ export default function CreatePage() {
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (values: Zod.infer<typeof formSchema>) => {
-    console.log(values);
     try {
-      const res = await axios.post("/api/courses", values);
+      const res = await axios.post('/api/courses', values);
       router.push(`/teacher/courses/${res.data.id}`);
-      toast.success("Course created");
+      toast.success('Course created');
     } catch (err) {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     }
   };
 
@@ -82,8 +85,8 @@ export default function CreatePage() {
               )}
             />
             <div className="flex items-center gap-x-2">
-              <Link href={"/"}>
-                <Button variant={"ghost"} type="button">
+              <Link href={'/'}>
+                <Button variant={'ghost'} type="button">
                   Cancel
                 </Button>
               </Link>

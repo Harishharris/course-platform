@@ -39,10 +39,33 @@ export default function ChapterActions({
     }
   };
 
+  const onClick = async () => {
+    try {
+      setIsLoading(true);
+      if (isPublished) {
+        const res = await axios.patch(
+          `/api/courses/${courseId}/chapters/${chapterId}/unpublish`
+        );
+        toast.success('Chapter Unublished');
+        router.refresh();
+      } else {
+        const res = await axios.patch(
+          `/api/courses/${courseId}/chapters/${chapterId}/publish`
+        );
+        toast.success('Chapter Published');
+        router.refresh();
+      }
+    } catch (err) {
+      toast.error('Something went wrong!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-x-2">
       <Button
-        onClick={() => {}}
+        onClick={onClick}
         disabled={disable || isLoading}
         variant={'outline'}
         size={'sm'}

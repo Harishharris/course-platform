@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-const z = require("zod");
-import axios from "axios";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+const z = require('zod');
+import axios from 'axios';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
 import {
   Form,
@@ -12,16 +12,15 @@ import {
   FormItem,
   FormField,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { Course } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import ComboboxDemo from "@/components/ui/combobox";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Course } from '@prisma/client';
+import { cn } from '@/lib/utils';
+import ComboboxDemo from '@/components/ui/combobox';
 
 interface CategoryProps {
   initialData: Course;
@@ -46,20 +45,19 @@ export default function CategoryForm({
   const form = useForm<Zod.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      categroyId: initialData.categoryId || "",
+      categroyId: initialData.categoryId || '',
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
   const onSubmit = async (values: Zod.infer<typeof formSchema>) => {
-    console.log(values);
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
-      toast.success("Course updated");
+      toast.success('Course updated');
       toggleEdit();
       router.refresh();
     } catch (err) {
-      toast.error("Something went wrong");
+      toast.error('Something went wrong');
     }
   };
 
@@ -71,7 +69,7 @@ export default function CategoryForm({
     <div className="mt-6 border bg-slate-100 rounded-md p-4 ">
       <div className="font-medium flex items-center justify-between">
         Course Category
-        <Button onClick={toggleEdit} variant={"ghost"}>
+        <Button onClick={toggleEdit} variant={'ghost'}>
           {isEditing ? (
             <>Cancel</>
           ) : (
@@ -87,11 +85,11 @@ export default function CategoryForm({
       {!isEditing ? (
         <p
           className={cn(
-            "text-sm mt-2",
-            !initialData.categoryId && "text-slate-500 italic"
+            'text-sm mt-2',
+            !initialData.categoryId && 'text-slate-500 italic'
           )}
         >
-          {selectedOption?.label || "No Category"}
+          {selectedOption?.label || 'No Category'}
         </p>
       ) : (
         <Form {...form}>
